@@ -12,6 +12,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import propra2.person.Model.Person;
 import propra2.person.Repository.EventRepository;
 import propra2.person.Repository.PersonRepository;
 
@@ -38,47 +40,49 @@ public class PersonRestControllerTest {
     PersonRepository personRepository;
     @Mock
     EventRepository eventRepository;
+    private Person person= new Person();
     @Before
     public void setup() {
-        Optional<Person> person;
-        person.get().setVorname("Tom");
-        person.get().setNachname("Stark");
-        person.get().setJahreslohn("10000");
-    }
-    @Test
-    public void getById() throws Exception {
-        verify(personRepository,times(1)).findById(1L);
-    }
+        // wichtig für get url
+        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+        viewResolver.setPrefix("/WEB-INF/jsp/view/");
+        viewResolver.setSuffix(".jsp");
 
+        person.setId(1L);
+        person.setVorname("Tom");
+        person.setNachname("Stark");
+        person.setJahreslohn("10000");
+        person.setKontakt("tung@gmail.com");
+        person.setProjekteId(new Long[]{3L,2L});
+        when(personRepository.findById(any())).thenReturn(Optional.ofNullable(person));
+    }
     @Test
     public void getEvents() {
         verify(eventRepository,times(1)).findAll();
         verify(eventRepository,times(1)).deleteAll();
 
     }
-    @Test
-    public void getById() throws Exception {
-
-        when(personRepository.findById(1L)).thenReturn();
-
-        mockMvc.perform(get("/{id}", 1L))
-                .andExpect(status().isOk())
-                .andExpect((ResultMatcher) content().contentType(TestUtil.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect((ResultMatcher) jsonPath("$[0].id", is(1)))
-                .andExpect((ResultMatcher) jsonPath("$[0].description", is("Lorem ipsum")))
-                .andExpect((ResultMatcher) jsonPath("$[0].title", is("Foo")))
-                .andExpect((ResultMatcher) jsonPath("$[1].id", is(2)))
-                .andExpect((ResultMatcher) jsonPath("$[1].description", is("Lorem ipsum")))
-                .andExpect((ResultMatcher) jsonPath("$[1].title", is("Bar")));
-
-        verify(todoServiceMock, times(1)).findAll();
-    }
+//    @Test
+//    public void getById() throws Exception {
+//        when(personRepository.findById(1L)).thenReturn(Optional.ofNullable(person));
+//
+//        mockMvc.perform(get("/{id}", 1L))
+//                .andExpect(status().isOk())
+//                .andExpect((ResultMatcher) content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+//                .andExpect(jsonPath("$", hasSize(2)))
+//                .andExpect((ResultMatcher) jsonPath("$[0].id", is(1L)))
+//                .andExpect((ResultMatcher) jsonPath("$[0].vorname", is("Tom")))
+//                .andExpect((ResultMatcher) jsonPath("$[0].nachname", is("Stark")))
+//              ;
+//
+//        verify(personRepository,times(1)).findById(1L);
+//
+//    }
 
 }
-public class TestUtil {
+class TestUtil {
 
-    public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
+    static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
             MediaType.APPLICATION_JSON.getSubtype(),
             Charset.forName("utf8")
     );

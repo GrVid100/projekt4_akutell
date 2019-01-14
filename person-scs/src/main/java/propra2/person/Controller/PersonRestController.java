@@ -13,15 +13,14 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("api")
-public class Person
-        RestController {
+public class PersonRestController {
     @Autowired
     PersonRepository personRepository;
     @Autowired
     EventRepository eventRepository;
 
     @GetMapping("/{id}")
-    public PersonApi getById(@PathVariable Long id) {
+    public @ResponseBody PersonApi getById(@PathVariable Long id) {
         Optional<Person> person = personRepository.findById(id);
         PersonApi personApi = new PersonApi(person.get());
         return personApi;
@@ -33,4 +32,5 @@ public class Person
         eventRepository.deleteAll();
         return personEvents;
     }
+
 }

@@ -16,7 +16,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import propra2.person.Model.Person;
-import propra2.person.Model.PersonEvent;
 import propra2.person.Model.Projekt;
 import propra2.person.Repository.EventRepository;
 import propra2.person.Repository.PersonRepository;

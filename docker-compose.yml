@@ -13,8 +13,8 @@ services:
   # Falls Sie das Person-SCS implementieren
   # ergänzen Sie diesen Teil
   person:
-    image: anhphu195/person-scs    
-# image: person-scs
+      
+    image: person-scs
     environment:
       - DATABASE_HOST=persondb
       - DATABASE_USER=root
@@ -23,8 +23,8 @@ services:
     depends_on:
       - persondb
   persondb:
-    image : anhphu195/projekt-scs   
-# image: mysql:latest
+       
+    image: mysql:latest
     environment: 
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=personen
