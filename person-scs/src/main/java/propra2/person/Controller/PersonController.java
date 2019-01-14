@@ -63,15 +63,17 @@ public class PersonController {
         newPerson.setJahreslohn(jahreslohn);
         newPerson.setKontakt(kontakt);
         newPerson.setSkills(skills);
-        List<Projekt> projekte = new ArrayList<>();
+
         if (vergangeneProjekte != null) {
+            List<Projekt> projekte = new ArrayList<>();
             newPerson.setProjekteId(vergangeneProjekte);
             projekte = projekteService.getProjekte(vergangeneProjekte);
+            model.addAttribute("projekte", projekte);
         }
         personRepository.save(newPerson);
         model.addAttribute("person", newPerson);
 
-        model.addAttribute("projekte", projekte);
+
         personEventService.createEvent(newPerson);
 
 	    return "confirmationAdd";
@@ -80,8 +82,11 @@ public class PersonController {
     @GetMapping("/edit/{id}")
     public String edit(Model model, @PathVariable Long id) {
         Optional<Person> person = personRepository.findById(id);
-        List<Projekt> projekte = projektRepository.findAll();
-        model.addAttribute("projekte", projekte);
+        if(person.isPresent()){
+            List<Projekt> projekte = projektRepository.findAll();
+            model.addAttribute("projekte", projekte);
+        }
+
         model.addAttribute("person", person);
         return "edit";
 	}

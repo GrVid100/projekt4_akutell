@@ -13,7 +13,8 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("api")
-public class PersonRestController {
+public class Person
+        RestController {
     @Autowired
     PersonRepository personRepository;
     @Autowired

@@ -1,23 +1,20 @@
-package propra2.person.ControllerTest;
+package propra2.person.Controller;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestContext;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
-import propra2.person.Controller.PersonController;
 import propra2.person.Model.Person;
 import propra2.person.Model.PersonEvent;
 import propra2.person.Model.Projekt;
@@ -31,11 +28,9 @@ import propra2.person.Service.ProjekteService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.AllOf.allOf;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.mockito.Mockito.*;
@@ -43,7 +38,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 @RunWith(MockitoJUnitRunner.class)
-//@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @ContextConfiguration(classes = {TestContext.class, WebApplicationContext.class})
 @WebAppConfiguration
@@ -53,9 +47,9 @@ public class PersonControllerJunitTests {
     private Person firstPerson = new Person();
     private Projekt firstProjekt = new Projekt();
     private List<Projekt> vergangeneProjekt = new ArrayList<>();
-    private PersonEvent newPersonEvent= new PersonEvent();
-    private MockMvc mockMvc;
 
+
+    private MockMvc mockMvc;
     @Mock
     PersonRepository personRepository;
     @Mock
@@ -70,29 +64,15 @@ public class PersonControllerJunitTests {
     PersonEventService personEventService;
     @Before
     public void setUp() {
-        firstPerson.setVorname("Tom");
-        firstPerson.setNachname("Stark");
-        firstPerson.setJahreslohn("100000");
-        firstPerson.setKontakt("tung@gmail.com");
-        firstPerson.setSkills(new String[]{"Java", "Python"});
-        firstPerson.setProjekteId(new Long[]{1L});
-
-        firstProjekt.setTitel("projekt4");
-        firstProjekt.setBeschreibung("description");
-        firstProjekt.setStartdatum("30.10.2018");
-        firstProjekt.setLaufzeit("10 Monaten");
-
-        newPersonEvent.setEvent("create");
-        newPersonEvent.setPersonId(1L);
-
         vergangeneProjekt.add(firstProjekt);
         //Person erzeugen
+        firstPerson.setVorname("Tom");
+        firstPerson.setNachname("Stark");
+        firstPerson.setJahreslohn("10000");
+        firstPerson.setKontakt("tung@gmail.com");
+        firstPerson.setSkills(new String[]{"Java", "Python"});
         firstPerson.setId(2L);
-
-        // when
-//        when(personRepository.findAll()).thenReturn(Arrays.asList(firstPerson));
         when(personRepository.findById(2L)).thenReturn(java.util.Optional.ofNullable(firstPerson));
-
         when(personRepository.save(Mockito.isA(Person.class))).thenReturn(firstPerson);
 
 
@@ -101,18 +81,22 @@ public class PersonControllerJunitTests {
         viewResolver.setPrefix("/WEB-INF/jsp/view/");
         viewResolver.setSuffix(".jsp");
         // Projekt erzeugen
+        firstProjekt.setTitel("projekt4");
+        firstProjekt.setBeschreibung("description");
+        firstProjekt.setStartdatum("30.10.2018");
+        firstProjekt.setLaufzeit("10 Monaten");
         firstProjekt.setId(1L);
-        //when
         when(projektRepository.findAll()).thenReturn(Arrays.asList(firstProjekt));
-        // when(projektRepository.findAllById(1L)).thenReturn(firstProjekt);
-        // EventRepository
-        //when(eventRepository.save(Mockito.isA(PersonEvent.class))).thenReturn(newPersonevent);
-        //PersonEventService
-        //doNothing().when(personEventService).createEvent(any());
+
         // build mockmvc
         this.mockMvc = MockMvcBuilders.standaloneSetup(new PersonController(projektRepository, personRepository,eventRepository,projekteService,personenMitProjektenService,personEventService))
                 .setViewResolvers(viewResolver)
                 .build();
+    }
+    @After
+    public void clear(){
+        projektRepository.deleteAll();
+        personRepository.deleteAll();
     }
     @Test
     public void MainPAGE_TEST() throws Exception{
@@ -127,13 +111,21 @@ public class PersonControllerJunitTests {
         mockMvc.perform(get("/addPerson"))
                 .andExpect(status().isOk())
                 .andDo(print())
-                .andExpect(view().name("addPerson"));
+                .andExpect(view().name("addPerson"))
+                .andExpect(model().attribute("projekte", hasItem(
+                        allOf(
+                                hasProperty("titel", is("projekt4")),
+                                hasProperty("beschreibung", is("description")),
+                                hasProperty("startdatum", is("30.10.2018")),
+                                hasProperty("laufzeit", is("10 Monaten"))
+                        )
+                )));
         verify(projektRepository, times(1)).findAll();
         verifyNoMoreInteractions(projektRepository);
     }
 
     @Test
-    public void AddToDatabaseTEST() throws Exception {
+    public void AddToDatabaseTEST_fullInfo() throws Exception {
         Long[] vergangeneProjekte =new Long[]{1L};
         vergangeneProjekt.add(firstProjekt);
         when(projekteService.getProjekte(any())).thenReturn((vergangeneProjekt));
@@ -148,6 +140,26 @@ public class PersonControllerJunitTests {
                 .param("vergangeneProjekte", "1")
         )
                 .andDo(print())
+                .andExpect(model().attribute("person",
+                        allOf(
+                                hasProperty("projekteId", is(vergangeneProjekte)),
+                                hasProperty("skills", is(new String[]{"Java", "Python"})),
+                                hasProperty("kontakt", is("tung@gmail.com")),
+                                hasProperty("jahreslohn", is("10000")),
+                                hasProperty("nachname", is("Stark")),
+                                hasProperty("vorname", is("Tom"))
+                        )
+                ))
+                .andExpect(model().attribute("projekte",hasItem(
+                        allOf(
+                                //hasProperty("id", is(vergangeneProjekte)),// nicht automatik erzeugt ???
+                                hasProperty("titel", is("projekt4")),
+                                hasProperty("beschreibung", is("description")),
+                                hasProperty("startdatum", is("30.10.2018")),
+                                hasProperty("laufzeit", is("10 Monaten"))
+                                //,hasProperty("team", is("1"))
+                        )
+                )))
         ;
         verify(personRepository, times(1)).save(isA(Person.class));
         verify(projekteService, times(1)).getProjekte(any());
@@ -155,18 +167,45 @@ public class PersonControllerJunitTests {
 
     }
 
+    @Test
+    public void AddToDatabaseTEST_no_Projekt() throws Exception {
+        vergangeneProjekt.add(firstProjekt);
+        mockMvc.perform(get("/add")
+
+                .param("vorname", "Tom")
+                .param("nachname", "Stark")
+                .param("jahreslohn", "10000")
+                .param("kontakt", "tung@gmail.com")
+
+        )
+                .andDo(print())
+                .andExpect(model().attribute("person",
+                        allOf(
+                                hasProperty("kontakt", is("tung@gmail.com")),
+                                hasProperty("jahreslohn", is("10000")),
+                                hasProperty("nachname", is("Stark")),
+                                hasProperty("vorname", is("Tom"))
+                        )
+                ))
+                .andExpect(model().size(1))
+
+        ;
+        verify(personRepository, times(1)).save(isA(Person.class));
+        verify(personEventService, times(1)).createEvent(any());
+
+    }
     //status muss OK und Exception
-    //@Test
-    //public void editTEST_PersonnichtVorhanden() throws Exception {
-    //    mockMvc.perform(get("/edit/{id}", 3L))
-    //            .andDo(print())
-    //            .andExpect(status().isNotFound())
-    //    ;
-    //
-    //    verify(personRepository, times(1)).findById(anyLong());
-    //    verify(projektRepository, times(0)).findAll();
-    //    verifyZeroInteractions(personRepository);
-    //}
+    @Test
+    public void editTEST_PersonnichtVorhanden() throws Exception {
+        mockMvc.perform(get("/edit/{id}", 3L))
+                .andDo(print())
+                .andExpect(status().isOk())
+        ;
+
+        verify(personRepository, times(1)).findById(anyLong());
+        verify(projektRepository, times(0)).findAll();
+        verifyZeroInteractions(personRepository);
+    }
 
     @Test
     public void editTEST_PersonVorhanden() throws Exception {
@@ -177,6 +216,14 @@ public class PersonControllerJunitTests {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(view().name("edit"))
+                .andExpect(request().attribute("projekte", hasItem(
+                        allOf(
+                                hasProperty("titel", is("projekt4")),
+                                hasProperty("beschreibung", is("description")),
+                                hasProperty("startdatum", is("30.10.2018")),
+                                hasProperty("laufzeit", is("10 Monaten"))
+                        )
+                )))
         ;
         verify(personRepository, times(1)).findById(1L);
         verifyZeroInteractions(personRepository);
