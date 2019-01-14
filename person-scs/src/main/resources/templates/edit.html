@@ -11,10 +11,6 @@
         <strong>Übersicht aller Personen</strong>
     </a>
 </p>
-<form th:action="@{'/person/delete/' + ${person.get().id}}" method="get">
-    <input type="hidden" name="delete" value="delete">
-    <button name="delete" class="btn btn-primary my-2" type="submit">Person löschen</button>
-</form>
 <form th:action="@{'/person/saveChanges/' + ${person.get().id}}" method="get">
     <div class="col-md-3 mb-3">
         <div class="form-group">
@@ -61,6 +57,11 @@
         </div>
     </div>
 </form>
+<form th:action="@{'/person/delete/' + ${person.get().id}}" method="get">
+    <input type="hidden" name="delete" value="delete">
+    <button name="delete" class="btn btn-danger" type="submit">Person löschen</button>
+</form>
+</br>
 <div class="alert alert-secondary">
     <p>© Made by Happy-Gruppe</p>
 </div>
