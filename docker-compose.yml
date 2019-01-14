@@ -13,7 +13,7 @@ services:
   # Falls Sie das Person-SCS implementieren
   # ergänzen Sie diesen Teil
   person:
-    image: person-scs
+    build: ./person-scs
     environment:
       - DATABASE_HOST=persondb
       - DATABASE_USER=root
@@ -23,7 +23,7 @@ services:
       - persondb
   persondb:
     image: mysql:latest
-    environment: 
+    environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=personen
       - MYSQL_PASSWORD=root
@@ -33,7 +33,7 @@ services:
   # Falls Sie das Projekt-SCS implementieren
   # ergänzen Sie diesen Teil
   projekt:
-    image: projekt-scs
+    build: ./projekt-scs
     environment:
       - DATABASE_HOST=projektdb
       - DATABASE_USER=root
@@ -43,8 +43,8 @@ services:
       - projektdb
   projektdb:
     image: mysql:latest
-    environment: 
+    environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=projekte
-      - MYSQL_PASSWORD=root    
+      - MYSQL_PASSWORD=root
   # ========================================
