@@ -28,7 +28,7 @@
             </li>
             <li class="list-group-item"><b>Vergangene Projekte: </b>
                 <ul th:if="${personMitProjekt.projekte != null}">
-                    <li th:each="projekt : ${personMitProjekt.projekte}" th:text="${projekt.titel} + ', ' + ${projekt.laufzeit}"></li>
+                    <li th:each="projekt : ${personMitProjekt.projekte}" th:text="${projekt.name} + ', ' + ${projekt.last}"></li>
                 </ul>
             </li>
             <li class="list-group-item">

@@ -22,9 +22,8 @@ public class ProjekteService {
         try {
             ProjektEvent[] projektEvents = getProjektEvents(ProjektEvent[].class);
             for (int i = 0; i < projektEvents.length; i++) {
-                String event = projektEvents[i].getEvent();
                 Long projektId = projektEvents[i].getProjektId();
-                if (event.equals("delete")) {
+                if (projektEvents[i].isDeleted()) {
                     projektRepository.deleteById(projektId);
                 }
                 else {
@@ -67,5 +66,4 @@ public class ProjekteService {
 
         return mono.block();
     }
-
 }

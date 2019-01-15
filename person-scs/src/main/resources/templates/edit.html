@@ -50,7 +50,7 @@
             </div>
             <label>Vergangene Projekte: </label><br>
             <div class="form-check" th:each="projekt : ${projekte}">
-                <input type="checkbox" class="form-check-input" name="vergangeneProjekte" th:text="${projekt.titel}" th:value="${projekt.id}">Projekte</input>
+                <input type="checkbox" class="form-check-input" name="vergangeneProjekte" th:text="${projekt.name}" th:value="${projekt.id}">Projekte</input>
                 <br>
             </div>
             <button class="btn btn-primary my-2" type="submit">Submit</button>

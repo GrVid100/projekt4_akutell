@@ -12,6 +12,9 @@ public class ProjektEvent {
     @Id
     @GeneratedValue
     private Long id;
+
     private Long projektId;
-    private String event;
+    private boolean deleted;
+    private boolean edit;
+    private boolean neu;
 }
