@@ -25,6 +25,7 @@ import propra2.person.Service.PersonEventService;
 import propra2.person.Service.PersonenMitProjektenService;
 import propra2.person.Service.ProjekteService;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -75,10 +76,10 @@ public class PersonControllerIntegrationsTest {
         firstPerson.setSkills(new String[]{"Java", "Python"});
         firstPerson.setProjekteId(new Long[]{1L});
 
-        firstProjekt.setTitel("projekt4");
+        firstProjekt.setName("projekt4");
         firstProjekt.setBeschreibung("description");
-        firstProjekt.setStartdatum("30.10.2018");
-        firstProjekt.setLaufzeit("10 Monaten");
+        firstProjekt.setStartTime(Date.valueOf("2018-10-30"));
+        firstProjekt.setLast(10);
 
         newPersonEvent.setEvent("create");
         newPersonEvent.setPersonId(1L);
@@ -121,10 +122,10 @@ public class PersonControllerIntegrationsTest {
                 .andExpect(model().attribute("projekte", hasSize(1)))
                 .andExpect(model().attribute("projekte", hasItem(
                         allOf(
-                                hasProperty("titel", is("projekt4")),
+                                hasProperty("name", is("projekt4")),
                                 hasProperty("beschreibung", is("description")),
-                                hasProperty("startdatum", is("30.10.2018")),
-                                hasProperty("laufzeit", is("10 Monaten"))
+                                hasProperty("startTime", is(Date.valueOf("2018-10-30"))),
+                                hasProperty("last", is(10))
                         )
                 )));
         verify(projektRepository, times(1)).findAll();
@@ -162,10 +163,10 @@ public class PersonControllerIntegrationsTest {
                 .andExpect(model().attribute("projekte", hasItem(
                         allOf(
                                 //hasProperty("id", is(vergangeneProjekte)),// nicht automatik erzeugt ???
-                                hasProperty("titel", is("projekt4")),
+                                hasProperty("name", is("projekt4")),
                                 hasProperty("beschreibung", is("description")),
-                                hasProperty("startdatum", is("30.10.2018")),
-                                hasProperty("laufzeit", is("10 Monaten"))
+                                hasProperty("startTime", is(Date.valueOf("2018-10-30"))),
+                                hasProperty("last", is(10))
                                 //,hasProperty("team", is("1"))
                         )
                 )));
@@ -197,10 +198,10 @@ public class PersonControllerIntegrationsTest {
                 .andExpect(view().name("edit"))
                 .andExpect(request().attribute("projekte", hasItem(
                         allOf(
-                                hasProperty("titel", is("projekt4")),
+                                hasProperty("name", is("projekt4")),
                                 hasProperty("beschreibung", is("description")),
-                                hasProperty("startdatum", is("30.10.2018")),
-                                hasProperty("laufzeit", is("10 Monaten"))
+                                hasProperty("startTime", is(Date.valueOf("2018-10-30"))),
+                                hasProperty("last", is(10))
                         )
                 )))
         ;
@@ -245,10 +246,10 @@ public class PersonControllerIntegrationsTest {
                 .andExpect(model().attribute("projekte", hasSize(1)))
                 .andExpect(model().attribute("projekte", hasItem(
                         allOf(
-                                hasProperty("titel", is("projekt4")),
+                                hasProperty("name", is("projekt4")),
                                 hasProperty("beschreibung", is("description")),
-                                hasProperty("startdatum", is("30.10.2018")),
-                                hasProperty("laufzeit", is("10 Monaten"))
+                                hasProperty("startTime", is(Date.valueOf("2018-10-30"))),
+                                hasProperty("last", is(10))
                         )
                 )));
         verify(projektRepository, times(1)).findAll();

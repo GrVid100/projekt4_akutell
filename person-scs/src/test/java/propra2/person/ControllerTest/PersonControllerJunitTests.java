@@ -25,6 +25,7 @@ import propra2.person.Service.PersonEventService;
 import propra2.person.Service.PersonenMitProjektenService;
 import propra2.person.Service.ProjekteService;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -73,10 +74,10 @@ public class PersonControllerJunitTests {
         firstPerson.setSkills(new String[]{"Java", "Python"});
         firstPerson.setProjekteId(new Long[]{1L});
 
-        firstProjekt.setTitel("projekt4");
+        firstProjekt.setName("projekt4");
         firstProjekt.setBeschreibung("description");
-        firstProjekt.setStartdatum("30.10.2018");
-        firstProjekt.setLaufzeit("10 Monaten");
+        firstProjekt.setStartTime(Date.valueOf("2018-10-30"));
+        firstProjekt.setLast(10);
 
         newPersonEvent.setEvent("create");
         newPersonEvent.setPersonId(1L);
